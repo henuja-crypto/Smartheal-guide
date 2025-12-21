@@ -10,7 +10,6 @@ import {
   Sun, 
   Moon,
   Menu,
-  Heart,
   Activity,
   User
 } from 'lucide-react';
@@ -41,12 +40,12 @@ export function AppLayout() {
         <Link to="/" className="flex items-center gap-3" onClick={() => setMobileOpen(false)}>
           <div className="relative">
             <div className="w-10 h-10 rounded-xl bg-gradient-healix flex items-center justify-center shadow-healix">
-              <Heart className="w-5 h-5 text-primary-foreground" />
+              <Stethoscope className="w-5 h-5 text-primary-foreground" />
             </div>
             <Activity className="w-4 h-4 text-primary absolute -bottom-1 -right-1 animate-pulse" />
           </div>
           <div>
-            <h1 className="font-display font-bold text-xl text-foreground">HealixCare</h1>
+            <h1 className="font-display font-bold text-xl text-foreground">Vitality</h1>
             <p className="text-xs text-muted-foreground">Your Health Companion</p>
           </div>
         </Link>
@@ -114,9 +113,9 @@ export function AppLayout() {
         <div className="flex items-center justify-between p-4">
           <Link to="/" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-healix flex items-center justify-center">
-              <Heart className="w-4 h-4 text-primary-foreground" />
+              <Stethoscope className="w-4 h-4 text-primary-foreground" />
             </div>
-            <span className="font-display font-bold text-lg">HealixCare</span>
+            <span className="font-display font-bold text-lg">Vitality</span>
           </Link>
 
           <div className="flex items-center gap-2">

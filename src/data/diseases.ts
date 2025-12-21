@@ -399,6 +399,59 @@ export const commonSymptoms = [
   'Cold sensitivity', 'Heat intolerance', 'Night sweats', 'Chills'
 ];
 
+// Symptom descriptions for tooltips
+export const symptomDescriptions: Record<string, string> = {
+  "Headache": "Pain or discomfort in the head, scalp, or neck area",
+  "Fever": "Elevated body temperature, often indicating infection",
+  "Fatigue": "Persistent tiredness or lack of energy",
+  "Nausea": "Feeling of sickness with an urge to vomit",
+  "Dizziness": "Sensation of spinning or loss of balance",
+  "Coughing": "Forceful expulsion of air from the lungs",
+  "Chest pain": "Discomfort in the chest area, can be sharp or dull",
+  "Shortness of breath": "Difficulty breathing or feeling like you can't get enough air",
+  "Joint pain": "Aching or soreness in body joints",
+  "Muscle pain": "Discomfort or soreness in muscle tissue",
+  "Muscle weakness": "Reduced strength in muscles making movements difficult",
+  "Rash": "Changes in skin appearance, often itchy or red",
+  "Sore throat": "Pain or scratchiness in the throat",
+  "Runny nose": "Excess nasal discharge, often due to cold or allergies",
+  "Back pain": "Discomfort in the back area, can affect daily activities",
+  "Abdominal pain": "Pain in the stomach or belly region",
+  "Vomiting": "Forceful expulsion of stomach contents",
+  "Diarrhea": "Loose, watery stools occurring more frequently",
+  "Constipation": "Difficulty passing stools or infrequent bowel movements",
+  "Loss of appetite": "Reduced desire to eat or lack of hunger",
+  "Weight changes": "Unexplained gain or loss of body weight",
+  "Appetite changes": "Abnormal increase or decrease in hunger",
+  "Sleep problems": "Difficulty falling or staying asleep",
+  "Insomnia": "Difficulty falling or staying asleep",
+  "Anxiety": "Persistent feelings of worry or nervousness",
+  "Depression": "Persistent feelings of sadness or hopelessness",
+  "Sweating": "Excessive perspiration, especially without physical exertion",
+  "Night sweats": "Heavy sweating during sleep without external cause",
+  "Swelling": "Enlargement of body parts due to fluid retention",
+  "Numbness": "Loss of sensation in body parts",
+  "Tingling": "Pins and needles sensation in body parts",
+  "Blurred vision": "Difficulty seeing clearly or focusing",
+  "Vision changes": "Any changes in how you see, including blurriness",
+  "Hearing changes": "Any changes in how you hear sounds",
+  "Palpitations": "Sensation of rapid, fluttering, or pounding heartbeat",
+  "Dry skin": "Rough, flaky, or cracked skin lacking moisture",
+  "Itching": "Irritating sensation causing the urge to scratch",
+  "Wheezing": "High-pitched whistling sound when breathing",
+  "Bloating": "Feeling of fullness or swelling in the abdomen",
+  "Indigestion": "Discomfort in upper abdomen after eating",
+  "Stiffness": "Difficulty moving joints or muscles freely",
+  "Increased thirst": "Feeling very thirsty more often than usual",
+  "Frequent urination": "Needing to urinate more often than normal",
+  "Memory problems": "Difficulty remembering things or concentrating",
+  "Confusion": "Difficulty thinking clearly or understanding",
+  "Cold sensitivity": "Feeling cold more easily than others",
+  "Heat intolerance": "Feeling uncomfortable or unwell in warm conditions",
+  "Chills": "Feeling cold with shivering, often with fever",
+  "Difficulty swallowing": "Trouble moving food or drink from mouth to stomach"
+};
+
 export function findDiseasesBySymptoms(selectedSymptoms: string[]): Disease[] {
   if (selectedSymptoms.length === 0) return [];
   

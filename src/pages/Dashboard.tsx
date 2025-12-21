@@ -18,9 +18,9 @@ import {
   Moon,
   BookOpen,
   UserCircle,
-  Flame,
-  HeartPulse
+  Flame
 } from "lucide-react";
+import doctorImage from "@/assets/doctor-anime.png";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -64,10 +64,12 @@ export default function Dashboard() {
                   <Button onClick={() => navigate("/profile")} className="healix-button gap-2"><UserCircle className="w-4 h-4" />Complete Your Profile</Button>
                 )}
               </div>
-              <div className="w-40 h-40 md:w-48 md:h-48 rounded-full bg-gradient-to-br from-primary to-accent p-1 shadow-glow">
-                <div className="w-full h-full rounded-full bg-background flex items-center justify-center">
-                  <HeartPulse className="w-20 h-20 text-primary animate-pulse" />
-                </div>
+              <div className="w-40 h-40 md:w-48 md:h-48 rounded-full bg-gradient-to-br from-primary/10 to-accent/10 p-2 shadow-glow flex items-center justify-center">
+                <img 
+                  src={doctorImage} 
+                  alt="Your health companion" 
+                  className="w-full h-full object-contain drop-shadow-lg"
+                />
               </div>
             </div>
           </div>
