@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { useHealthProfile, useTheme, useLocalStorage } from "@/hooks/useLocalStorage";
 import { 
   Settings as SettingsIcon,
   Moon,
@@ -28,14 +28,17 @@ import { toast } from "@/hooks/use-toast";
 
 export default function Settings() {
   const navigate = useNavigate();
-  const { profile, clearAllData, theme, setTheme } = useLocalStorage();
+  const [profile] = useHealthProfile();
+  const { theme, setTheme } = useTheme();
   const [notifications, setNotifications] = useState(true);
   const [soundEffects, setSoundEffects] = useState(true);
   const [language, setLanguage] = useState("en");
 
   const handleClearData = () => {
     if (confirm("Are you sure you want to clear all your data? This action cannot be undone.")) {
-      clearAllData();
+      localStorage.removeItem("healix-profile");
+      localStorage.removeItem("healix-symptom-history");
+      localStorage.removeItem("healix-daily-goals");
       toast({
         title: "Data Cleared",
         description: "All your local data has been removed"
@@ -54,7 +57,7 @@ export default function Settings() {
           label: "Dark Mode",
           description: "Switch between light and dark themes",
           icon: theme === "dark" ? Moon : Sun,
-          type: "switch",
+          type: "switch" as const,
           value: theme === "dark",
           onChange: () => setTheme(theme === "dark" ? "light" : "dark")
         }
@@ -69,7 +72,7 @@ export default function Settings() {
           label: "Push Notifications",
           description: "Receive reminders for your health goals",
           icon: Bell,
-          type: "switch",
+          type: "switch" as const,
           value: notifications,
           onChange: () => setNotifications(!notifications)
         },
@@ -78,7 +81,7 @@ export default function Settings() {
           label: "Sound Effects",
           description: "Play sounds for achievements",
           icon: Volume2,
-          type: "switch",
+          type: "switch" as const,
           value: soundEffects,
           onChange: () => setSoundEffects(!soundEffects)
         }
@@ -93,7 +96,7 @@ export default function Settings() {
           label: "Language",
           description: "Choose your preferred language",
           icon: Globe,
-          type: "select",
+          type: "select" as const,
           value: language,
           options: [
             { value: "en", label: "English" },
@@ -211,7 +214,7 @@ export default function Settings() {
             </CardTitle>
           </CardHeader>
           <CardContent className="p-2">
-            {quickLinks.map((link, index) => (
+            {quickLinks.map((link) => (
               <button
                 key={link.label}
                 onClick={() => link.path !== "#" && navigate(link.path)}

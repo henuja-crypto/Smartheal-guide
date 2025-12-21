@@ -5,9 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { useLocalStorage, HealthProfile as HealthProfileType } from "@/hooks/useLocalStorage";
+import { useHealthProfile, HealthProfile as HealthProfileType } from "@/hooks/useLocalStorage";
 import { 
   User, 
   Heart, 
@@ -38,24 +37,24 @@ const commonAllergies = [
 
 export default function HealthProfile() {
   const navigate = useNavigate();
-  const { profile, saveProfile } = useLocalStorage();
+  const [profile, setProfile] = useHealthProfile();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<HealthProfileType>({
     name: "",
     age: 0,
-    gender: "other",
+    gender: "",
     height: 0,
     weight: 0,
-    activityLevel: "moderate",
-    smokingStatus: "never",
-    alcoholConsumption: "none",
+    activityLevel: "",
+    smokingStatus: "",
+    alcoholConsumption: "",
     existingConditions: [],
     allergies: [],
     isProfileComplete: false
   });
 
   useEffect(() => {
-    if (profile) {
+    if (profile && profile.isProfileComplete) {
       setFormData(profile);
     }
   }, [profile]);
@@ -74,7 +73,7 @@ export default function HealthProfile() {
   };
 
   const handleSave = () => {
-    saveProfile({ ...formData, isProfileComplete: true });
+    setProfile({ ...formData, isProfileComplete: true });
     toast({
       title: "Profile Saved! 🎉",
       description: "Your health profile has been saved successfully.",
@@ -153,7 +152,7 @@ export default function HealthProfile() {
                   <Label>Gender</Label>
                   <Select value={formData.gender} onValueChange={(v) => updateField("gender", v)}>
                     <SelectTrigger className="bg-background/50">
-                      <SelectValue />
+                      <SelectValue placeholder="Select" />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="male">Male</SelectItem>

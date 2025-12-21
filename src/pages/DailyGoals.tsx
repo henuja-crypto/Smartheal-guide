@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import { useLocalStorage, DailyGoal } from "@/hooks/useLocalStorage";
+import { useDailyGoals, DailyGoal } from "@/hooks/useLocalStorage";
 import { 
   Droplets, 
   Footprints, 
@@ -20,82 +20,84 @@ import {
   Target,
   Zap,
   Bell,
-  Clock
+  Clock,
+  Dumbbell
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
-const defaultGoals: DailyGoal[] = [
-  { id: "water", name: "Water Intake", target: 8, current: 0, unit: "glasses", icon: "droplets", completed: false },
-  { id: "steps", name: "Walking Steps", target: 10000, current: 0, unit: "steps", icon: "footprints", completed: false },
-  { id: "sleep", name: "Sleep Hours", target: 8, current: 0, unit: "hours", icon: "moon", completed: false },
-  { id: "breathing", name: "Breathing Exercises", target: 3, current: 0, unit: "sessions", icon: "wind", completed: false },
-  { id: "medication", name: "Take Medications", target: 1, current: 0, unit: "times", icon: "pill", completed: false }
-];
-
 const iconMap: Record<string, React.ReactNode> = {
-  droplets: <Droplets className="w-6 h-6" />,
-  footprints: <Footprints className="w-6 h-6" />,
-  moon: <Moon className="w-6 h-6" />,
-  wind: <Wind className="w-6 h-6" />,
-  pill: <Pill className="w-6 h-6" />
+  water: <Droplets className="w-6 h-6" />,
+  steps: <Footprints className="w-6 h-6" />,
+  sleep: <Moon className="w-6 h-6" />,
+  exercise: <Dumbbell className="w-6 h-6" />,
+  breathing: <Wind className="w-6 h-6" />,
+  medication: <Pill className="w-6 h-6" />
 };
 
 const colorMap: Record<string, string> = {
-  droplets: "from-blue-500 to-cyan-400",
-  footprints: "from-green-500 to-emerald-400",
-  moon: "from-indigo-500 to-purple-400",
-  wind: "from-teal-500 to-primary",
-  pill: "from-rose-500 to-pink-400"
+  water: "from-blue-500 to-cyan-400",
+  steps: "from-green-500 to-emerald-400",
+  sleep: "from-indigo-500 to-purple-400",
+  exercise: "from-orange-500 to-red-400",
+  breathing: "from-teal-500 to-primary",
+  medication: "from-rose-500 to-pink-400"
 };
 
 export default function DailyGoals() {
-  const { dailyGoals, saveDailyGoals, streak, updateStreak } = useLocalStorage();
-  const [goals, setGoals] = useState<DailyGoal[]>(dailyGoals.length > 0 ? dailyGoals : defaultGoals);
+  const [goalProgress, setGoalProgress] = useDailyGoals();
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
-  useEffect(() => {
-    saveDailyGoals(goals);
-    
-    // Check if all goals are completed
-    const allCompleted = goals.every(g => g.completed);
-    if (allCompleted && goals.some(g => g.current > 0)) {
-      updateStreak();
-    }
-  }, [goals]);
+  const goals = goalProgress.goals;
+  const streak = goalProgress.streak;
 
   const updateGoal = (id: string, increment: boolean) => {
-    setGoals(prev => prev.map(goal => {
-      if (goal.id !== id) return goal;
+    setGoalProgress(prev => {
+      const updatedGoals = prev.goals.map(goal => {
+        if (goal.id !== id) return goal;
+        
+        const incrementValue = getIncrement(goal.type);
+        let newCurrent = increment 
+          ? Math.min(goal.current + incrementValue, goal.target * 2)
+          : Math.max(goal.current - incrementValue, 0);
+        
+        const wasComplete = goal.current >= goal.target;
+        const isNowComplete = newCurrent >= goal.target;
+        
+        if (isNowComplete && !wasComplete) {
+          toast({
+            title: "Goal Achieved! 🎉",
+            description: `You've completed your ${goal.label.toLowerCase()} goal!`
+          });
+        }
+        
+        return { ...goal, current: newCurrent };
+      });
+
+      // Check if all goals are completed
+      const allCompleted = updatedGoals.every(g => g.current >= g.target);
+      const prevAllCompleted = prev.goals.every(g => g.current >= g.target);
       
-      let newCurrent = increment 
-        ? Math.min(goal.current + getIncrement(id), goal.target * 2)
-        : Math.max(goal.current - getIncrement(id), 0);
-      
-      const completed = newCurrent >= goal.target;
-      
-      if (completed && !goal.completed) {
-        toast({
-          title: "Goal Achieved! 🎉",
-          description: `You've completed your ${goal.name.toLowerCase()} goal!`
-        });
-      }
-      
-      return { ...goal, current: newCurrent, completed };
-    }));
+      return {
+        ...prev,
+        goals: updatedGoals,
+        streak: allCompleted && !prevAllCompleted ? prev.streak + 1 : prev.streak
+      };
+    });
   };
 
-  const getIncrement = (id: string) => {
-    switch (id) {
+  const getIncrement = (type: string) => {
+    switch (type) {
       case "steps": return 1000;
       case "water": return 1;
       case "sleep": return 1;
+      case "exercise": return 10;
       case "breathing": return 1;
       case "medication": return 1;
       default: return 1;
     }
   };
 
-  const completedGoals = goals.filter(g => g.completed).length;
+  const completedGoals = goals.filter(g => g.current >= g.target).length;
   const totalGoals = goals.length;
   const overallProgress = (completedGoals / totalGoals) * 100;
 
@@ -206,7 +208,7 @@ export default function DailyGoals() {
         <div className="space-y-4">
           {goals.map((goal) => {
             const progress = Math.min((goal.current / goal.target) * 100, 100);
-            const isComplete = goal.completed;
+            const isComplete = goal.current >= goal.target;
 
             return (
               <Card 
@@ -215,14 +217,14 @@ export default function DailyGoals() {
               >
                 <CardContent className="p-5">
                   <div className="flex items-center gap-4">
-                    <div className={`p-3 rounded-xl bg-gradient-to-br ${colorMap[goal.icon]} shadow-lg`}>
-                      {iconMap[goal.icon]}
+                    <div className={`p-3 rounded-xl bg-gradient-to-br ${colorMap[goal.type]} shadow-lg text-white`}>
+                      {iconMap[goal.type]}
                     </div>
                     
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-1">
                         <h3 className="font-semibold text-foreground flex items-center gap-2">
-                          {goal.name}
+                          {goal.label}
                           {isComplete && <Check className="w-4 h-4 text-success" />}
                         </h3>
                         <span className="text-sm font-medium text-muted-foreground">

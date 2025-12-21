@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
-import { useLocalStorage, SymptomEntry } from "@/hooks/useLocalStorage";
+import { useSymptomHistory, SymptomEntry } from "@/hooks/useLocalStorage";
 import { bodyParts, commonSymptoms, findDiseasesBySymptoms, Disease } from "@/data/diseases";
 import { 
   Search, 
@@ -26,7 +26,7 @@ import { toast } from "@/hooks/use-toast";
 
 export default function SymptomChecker() {
   const navigate = useNavigate();
-  const { addSymptomEntry } = useLocalStorage();
+  const [symptomHistory, setSymptomHistory] = useSymptomHistory();
   const [step, setStep] = useState<"input" | "analyzing" | "results">("input");
   const [selectedBodyParts, setSelectedBodyParts] = useState<string[]>([]);
   const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
@@ -83,10 +83,10 @@ export default function SymptomChecker() {
       date: new Date().toISOString(),
       symptoms: selectedSymptoms,
       bodyParts: selectedBodyParts,
-      additionalInfo,
-      possibleConditions: matchedDiseases.map(d => d.name)
+      description: additionalInfo,
+      results: matchedDiseases.map(d => d.name)
     };
-    addSymptomEntry(entry);
+    setSymptomHistory(prev => [entry, ...prev].slice(0, 50));
 
     setStep("results");
   };
@@ -165,8 +165,8 @@ export default function SymptomChecker() {
                       }`}
                       onClick={() => toggleBodyPart(part.id)}
                     >
-                      <span className="mr-2">{part.icon || "🔴"}</span>
-                      {part.name}
+                      <span className="mr-2">{part.icon}</span>
+                      {part.label}
                     </Badge>
                   ))}
                 </div>
