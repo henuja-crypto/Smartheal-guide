@@ -5,12 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useSymptomHistory, SymptomEntry } from "@/hooks/useLocalStorage";
-import { bodyParts, commonSymptoms, findDiseasesBySymptoms, Disease } from "@/data/diseases";
+import { bodyParts, commonSymptoms, symptomDescriptions, findDiseasesBySymptoms, Disease } from "@/data/diseases";
 import { 
   Search, 
   Brain, 
-  Heart,
+  MapPin,
   Stethoscope,
   AlertTriangle,
   CheckCircle2,
@@ -183,22 +184,30 @@ export default function SymptomChecker() {
                 <CardDescription>Select all that apply</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="flex flex-wrap gap-2">
-                  {commonSymptoms.map((symptom) => (
-                    <Badge
-                      key={symptom}
-                      variant={selectedSymptoms.includes(symptom) ? "default" : "outline"}
-                      className={`cursor-pointer py-2 px-4 text-sm transition-all ${
-                        selectedSymptoms.includes(symptom)
-                          ? "bg-accent text-accent-foreground hover:bg-accent/90"
-                          : "hover:bg-accent/10"
-                      }`}
-                      onClick={() => toggleSymptom(symptom)}
-                    >
-                      {symptom}
-                    </Badge>
-                  ))}
-                </div>
+                <TooltipProvider>
+                  <div className="flex flex-wrap gap-2">
+                    {commonSymptoms.map((symptom) => (
+                      <Tooltip key={symptom}>
+                        <TooltipTrigger asChild>
+                          <Badge
+                            variant={selectedSymptoms.includes(symptom) ? "default" : "outline"}
+                            className={`cursor-pointer py-2 px-4 text-sm transition-all ${
+                              selectedSymptoms.includes(symptom)
+                                ? "bg-accent text-accent-foreground hover:bg-accent/90"
+                                : "hover:bg-accent/10"
+                            }`}
+                            onClick={() => toggleSymptom(symptom)}
+                          >
+                            {symptom}
+                          </Badge>
+                        </TooltipTrigger>
+                        <TooltipContent side="top" className="max-w-[250px] text-center">
+                          <p className="text-sm">{symptomDescriptions[symptom] || `Common symptom related to various conditions`}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    ))}
+                  </div>
+                </TooltipProvider>
               </CardContent>
             </Card>
 
@@ -312,13 +321,12 @@ export default function SymptomChecker() {
               </Card>
             )}
 
-            {/* Actions */}
             <div className="flex gap-4">
               <Button variant="outline" onClick={resetChecker} className="flex-1 gap-2">
                 <RefreshCw className="w-4 h-4" /> Check Again
               </Button>
               <Button onClick={() => navigate("/nearby")} className="flex-1 healix-button gap-2">
-                <Heart className="w-4 h-4" /> Find Nearby Care
+                <MapPin className="w-4 h-4" /> Find Nearby Care
               </Button>
             </div>
 

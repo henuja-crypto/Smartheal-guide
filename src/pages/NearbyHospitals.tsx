@@ -312,7 +312,17 @@ export default function NearbyHospitals() {
                       </div>
                     </div>
 
-                    <Button variant="outline" size="sm" className="gap-1 flex-shrink-0">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="gap-1 flex-shrink-0"
+                      onClick={() => {
+                        window.open(
+                          `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(facility.address)}`,
+                          '_blank'
+                        );
+                      }}
+                    >
                       <ExternalLink className="w-4 h-4" />
                       Directions
                     </Button>
