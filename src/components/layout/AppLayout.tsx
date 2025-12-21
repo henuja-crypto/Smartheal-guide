@@ -1,5 +1,5 @@
-import { ReactNode, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useState } from 'react';
+import { Link, useLocation, Outlet } from 'react-router-dom';
 import { 
   Home, 
   Stethoscope, 
@@ -10,29 +10,26 @@ import {
   Sun, 
   Moon,
   Menu,
-  X,
   Heart,
-  Activity
+  Activity,
+  User
 } from 'lucide-react';
 import { useTheme } from '@/hooks/useLocalStorage';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
-interface AppLayoutProps {
-  children: ReactNode;
-}
-
 const navItems = [
   { path: '/', label: 'Dashboard', icon: Home },
   { path: '/symptom-checker', label: 'Symptom Checker', icon: Stethoscope },
-  { path: '/diseases', label: 'Health Library', icon: BookOpen },
+  { path: '/library', label: 'Health Library', icon: BookOpen },
   { path: '/goals', label: 'Daily Goals', icon: Target },
   { path: '/nearby', label: 'Nearby Care', icon: MapPin },
+  { path: '/profile', label: 'Profile', icon: User },
   { path: '/settings', label: 'Settings', icon: Settings },
 ];
 
-export function AppLayout({ children }: AppLayoutProps) {
+export function AppLayout() {
   const location = useLocation();
   const { theme, toggleTheme } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -144,7 +141,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       {/* Main Content */}
       <main className="lg:pl-64">
         <div className="pt-16 lg:pt-0 min-h-screen">
-          {children}
+          <Outlet />
         </div>
       </main>
     </div>
